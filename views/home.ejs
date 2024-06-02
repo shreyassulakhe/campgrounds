@@ -1,0 +1,47 @@
+<% layout('/layouts/boilerplate') -%>
+    <div id="map" style="width: 100%;height:500px"></div>
+    <h2>All Campgrounds</h2>
+    <a href="/campgrounds/new">Add new campground</a>
+    <ul>
+        <% for (let camp of allCamps) {%>
+            <div class="card mb-3">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div id="carouselExample" class="carousel slide">
+                            <div class="carousel-inner">
+                                <% camp.image.forEach( (img,i)=> { %>
+                                    <div class="carousel-item <%= (i === 0 )? 'active' : '' %>">
+                                        <img class="d-block w-100 object-fit-fill border" src="<%= img.url%>"
+                                            alt="Img...">
+                                    </div>
+                                    <% }) %>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <%= camp.title %>
+                            </h5>
+                            <p class="card-text">
+                                <%= camp.description %>
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <%=camp.location%>
+                                </small>
+                            </p>
+                            <a class="btn btn-primary" href="/campgrounds/<%= camp.id %>">Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+    </ul>
+
+    <script>
+        const campgrounds = { features: <%-  JSON.stringify(allCamps) %> };
+    </script>
+
+    <script src="/scripts/clusterMap.js"></script>

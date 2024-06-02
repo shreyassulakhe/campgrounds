@@ -1,0 +1,126 @@
+<% layout('layouts/boilerplate') -%>
+
+    <link rel="stylesheet" href="/styles/star.css">
+
+    <div class="row ">
+        <div class="col-6  ">
+            <div id='map' style='width: 400px; height: 300px;'></div>
+
+            <div id="carouselExample" class="carousel slide">
+                <div class="carousel-inner">
+                    <% camp.image.forEach( (img,i)=> { %>
+                        <div class="carousel-item <%= (i === 0 )? 'active' : '' %>">
+                            <img class="d-block w-100" src="<%= img.url%>" alt="Img...">
+                        </div>
+                        <% }) %>
+                </div>
+                <% if(camp.image.length> 1) { %>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                    <% } %>
+            </div>
+
+
+            <div class="card mb-3 shadow-lg p-3 mb-5 bg-white rounded">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <%= camp.title%>
+                    </h5>
+                    <p class="card-text">
+                        <%= camp.description%>
+                    </p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item text-muted">
+                        <%= camp.location%>
+
+                    </li>
+                    <li class="list-group-item">$<%= camp.price%>/night</li>
+                </ul>
+                <div class="card-body">
+                    <a class="card-link btn btn-info" href="/campgrounds/<%=camp._id%>/edit">Edit</a>
+                    <form class="d-inline" action="/campgrounds/<%=camp._id%>?_method=DELETE" method="POST">
+                        <button class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+                <div class="card-footer text-muted">
+                    2 days ago
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="review mb-5 ">
+                <div class="card-body">
+                    <h2>Leave a review</h2>
+                    <form action="/campgrounds/<%=camp._id%>/newReview" method="POST" class="mb-3 validated-form">
+                        <label for="rating" class="from-label">Rating : </label>
+                        <fieldset class="starability-basic">
+                            <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0"
+                                checked aria-label="No rating." />
+                            <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                            <label for="first-rate1" title="Terrible">1 star</label>
+                            <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                            <label for="first-rate2" title="Not good">2 stars</label>
+                            <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                            <label for="first-rate3" title="Average">3 stars</label>
+                            <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                            <label for="first-rate4" title="Very good">4 stars</label>
+                            <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                            <label for="first-rate5" title="Amazing">5 stars</label>
+                        </fieldset>
+
+                        <label class="form-label" for="body">Review : </label>
+                        <textarea class="form-control" name="review[body]" id="body" cols="30" rows="2"
+                            required></textarea>
+                        <br>
+                        <button class="btn btn-success" type="submit"> Add Review </button>
+                    </form>
+                </div>
+            </div>
+            <h2>Reviews..</h2>
+            <% for(let review of camp.reviews) { %>
+                <div class="card shadow mb-4 bg-white rounded ">
+                    <div class="display-reviews card-body m-0 ">
+                        <h4 class="card-title m-1">Rating :
+                        </h4>
+                        <p class="starability-result" data-rating="<%= review.rating %>">
+                            Rated: 3 stars
+                        </p>
+                        <p class="m-1 card-text">Body : <%= review.body %>
+                        </p>
+                        <form action="/campgrounds/<%= camp._id %>/<%= review._id %>?_method=DELETE" method="post">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+
+                        </form>
+                    </div>
+                </div>
+                <% } %>
+        </div>
+    </div>
+
+
+    <script>
+        //const campground = <%- JSON.stringify(camp)%>;
+        //console.log(campground);
+        mapboxgl.accessToken = '<%-process.env.MAPBOX_TOKEN%>';
+        const map = new mapboxgl.Map({
+            container: 'map', // container ID
+            style: 'mapbox://styles/mapbox/streets-v12', // style URL
+            zoom: 12, //starting zoom
+            center: [<%-camp.geometry.coordinates%>]  // starting position [lng, lat]
+        });
+        map.addControl(new mapboxgl.NavigationControl());
+
+        new mapboxgl.Marker({ color: "red", rotation: 6 })
+            .setLngLat([<%-camp.geometry.coordinates%>])
+            .addTo(map);
+
+    </script>

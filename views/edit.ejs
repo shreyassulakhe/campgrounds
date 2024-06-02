@@ -1,0 +1,56 @@
+<% layout('layouts/boilerplate') -%>
+
+    <style>
+        body {
+            background-color: white;
+        }
+    </style>
+
+    <h2 class="mb-5">Edit Information</h2>
+    <form action="/campgrounds/<%= camp.id %>?_method=put " method="POST" novalidate class="validated-form"
+        enctype="multipart/form-data">
+
+
+        <label class="form-label" for="title">Title</label>
+        <input class="form-control" type="text" name="title" id="title" value="<%= camp.title %>" required>
+        <br>
+
+        <label class="form-label" for="location">location</label>
+        <input class="form-control" type="text" name="location" id="location" value="<%= camp.location %>" required>
+        <br>
+
+        <label class="form-label" for="price">Price</label>
+        <input class="form-control" type="number" name="price" id="price" value="<%= camp.price %>" required>
+        <br>
+
+        <label class="form-label" for="image">Add Images : &nbsp &nbsp </label>
+        <!-- <input class="form-control" type="text" name="img" id="img" value="" required> -->
+        <!-- <input type="file" name="image" id="image" multiple> -->
+        <div class="mb-4">
+            <input class="form-control" type="file" id="formFileMultiple" multiple name="image">
+        </div>
+
+        <label class="form-label" for="description">Description</label>
+        <textarea class="form-control textarea" name="description" id="description" rows="3"
+            value="<%= camp.description %>" required></textarea>
+        <br>
+
+        <div class="mb-3">
+            <% camp.image.forEach((img,i)=>{ %>
+                <img src="<%= img.thumbnail %>" class="img-thumbnail" alt="Img..">
+                <div class="form-check-inline">
+                    <input type="checkbox" name="deleteImages[]" value="<%=img.imageName%>" id="image-<%=i%>">
+                </div>
+                <label for="image-<%=i%>">Delete ?</label>
+                <% }) %>
+        </div>
+
+        <button class="btn btn-success" type="submit">Edit</button>
+
+    </form>
+
+    <script>
+
+        document.querySelector('.textarea').value = "<%= camp.description %>";
+
+    </script>
